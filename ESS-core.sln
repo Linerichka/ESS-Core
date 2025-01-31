@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESS-core", "ESS-core\ESS-core.csproj", "{98E1F6FC-A3A7-432B-AEE8-D6DC71FA72BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{80E34833-20E3-4B43-9C8C-8168558B645F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{33A11DAE-613A-43DF-B729-CCD1942922D9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{98E1F6FC-A3A7-432B-AEE8-D6DC71FA72BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98E1F6FC-A3A7-432B-AEE8-D6DC71FA72BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98E1F6FC-A3A7-432B-AEE8-D6DC71FA72BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98E1F6FC-A3A7-432B-AEE8-D6DC71FA72BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80E34833-20E3-4B43-9C8C-8168558B645F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80E34833-20E3-4B43-9C8C-8168558B645F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80E34833-20E3-4B43-9C8C-8168558B645F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80E34833-20E3-4B43-9C8C-8168558B645F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33A11DAE-613A-43DF-B729-CCD1942922D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33A11DAE-613A-43DF-B729-CCD1942922D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33A11DAE-613A-43DF-B729-CCD1942922D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33A11DAE-613A-43DF-B729-CCD1942922D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
