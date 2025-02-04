@@ -7,7 +7,8 @@ using Lineri.ESS.Core.Interfaces;
 
 namespace Lineri.ESS.Core
 {
-    public class ListAudio : ICollection, IEnumerable<Audio>
+    public class ListAudio<TAudio> : ICollection, IEnumerable<TAudio>
+    where TAudio : class, IAudio
     {
         public int Count => _array.Length;
         public bool IsSynchronized => _array.IsSynchronized;
@@ -27,30 +28,30 @@ namespace Lineri.ESS.Core
             }
         }
 
-        private Audio[] _array;
+        private TAudio[] _array;
         private int _lastIndex = 0;
 
         #region Constructors
         public ListAudio() 
         { 
-            _array = new Audio[_capacity];
+            _array = new TAudio[_capacity];
         }
 
         public ListAudio(int capacity)
         {
-            _array = new Audio[capacity];
+            _array = new TAudio[capacity];
         }
 
         public ListAudio(Audio[] array)
         {
-            _array = (Audio[])array.Clone();
+            _array = (TAudio[])array.Clone();
             Capacity = array.Length < Capacity ? Capacity : array.Length;
         }
         #endregion  
 
-        public Audio[] ToArray()
+        public TAudio[] ToArray()
         {
-            return (Audio[])_array.Clone();
+            return (TAudio[])_array.Clone();
         }
 
         public void CopyTo(Array array, int index)
@@ -64,7 +65,7 @@ namespace Lineri.ESS.Core
             return _array.GetEnumerator();
         }
 
-        public IEnumerator<Audio> GetEnumerator()
+        public IEnumerator<TAudio> GetEnumerator()
         {
             int length = _array.Length;
             for (int i = 0; i < length; i++)
@@ -74,7 +75,7 @@ namespace Lineri.ESS.Core
         }
         #endregion
 
-        public Audio this[int index]
+        public TAudio this[int index]
         {
             get
             {
@@ -116,7 +117,7 @@ namespace Lineri.ESS.Core
             return -1;
         }
 
-        public int IndexOf(Predicate<Audio> predicate)
+        public int IndexOf(Predicate<TAudio> predicate)
         {
             for (int i = _array.Length - 1; i >= 0; i--)
             {
@@ -137,7 +138,7 @@ namespace Lineri.ESS.Core
         }
         #endregion
         
-        public int Add(Audio audio)
+        public int Add(TAudio audio)
         {
             int index = GetFreeIndex();
             _array[index] = audio;
@@ -210,7 +211,7 @@ namespace Lineri.ESS.Core
         
         private void RecreateArray()
         {
-            Audio[] result = new Audio[_capacity];
+            TAudio[] result = new TAudio[_capacity];
 
             for (int i = _array.Length - 1; i >= 0; i--)
             {

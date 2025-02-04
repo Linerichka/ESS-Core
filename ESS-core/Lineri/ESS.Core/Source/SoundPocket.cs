@@ -228,7 +228,7 @@ namespace Lineri.ESS.Core
         #region PlayClip
         protected virtual void PlayAudioFromList(bool callPlay)
         {
-            if (!_playWasCalled || !PlayClips || !EazySoundManager.CanPlay) return;
+            if (!_playWasCalled || !PlayClips || !EazySoundManager.Instance.CanPlay) return;
 
             if (PlayAllClipsTogether) PlayAllClipsInListTogether(callPlay);        
             else PlayClipsOneAfterTheOther(callPlay);          
@@ -337,7 +337,7 @@ namespace Lineri.ESS.Core
         
         protected virtual Audio PlayAudioMusic(IAudioClip clip)
         {
-            Audio audio = EazySoundManager.PlayMusic(clip, SoundVolume, false, PersistSoundOnSceneLoad,
+            Audio audio = EazySoundManager.Instance.PlayMusic(clip, SoundVolume, false, PersistSoundOnSceneLoad,
                 FadeInCanSet() ? FadeInSecond : 0f,
                 FadeOutSecond, CurrentMusicFadeOut);
             _audioFromClips.Add(audio);
@@ -346,7 +346,7 @@ namespace Lineri.ESS.Core
         
         protected virtual Audio PlayAudioSound(IAudioClip clip)
         {
-            Audio audio = EazySoundManager.PlaySound(clip, SoundVolume, false, PersistSoundOnSceneLoad,
+            Audio audio = EazySoundManager.Instance.PlaySound(clip, SoundVolume, false, PersistSoundOnSceneLoad,
                 FadeInCanSet() ? FadeInSecond : 0f, 
                 FadeOutSecond);
             _audioFromClips.Add(audio);
@@ -370,7 +370,7 @@ namespace Lineri.ESS.Core
 
         protected virtual Audio PlayAudioUISound(IAudioClip clip)
         {
-            Audio audio = EazySoundManager.PlayUISound(clip, SoundVolume);
+            Audio audio = EazySoundManager.Instance.PlayUISound(clip, SoundVolume);
             _audioFromClips.Add(audio);
             return audio;
         }

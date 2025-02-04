@@ -62,11 +62,11 @@ namespace Lineri.ESS.Core
             }
         }
 
-        public bool Persist;
-        public float FadeInSeconds;
-        public float FadeOutSeconds;
-        
-        
+        public bool Persist { get; set; }
+        public float FadeInSeconds { get; set; }
+        public float FadeOutSeconds { get; set; }
+
+
         private IAudioClip _clip;
         private float _volume;
         private bool _loop;
@@ -160,17 +160,17 @@ namespace Lineri.ESS.Core
             {
                 case AudioType.Music:
                     {
-                        AudioSource.Volume = Volume * EazySoundManager.GlobalMusicVolume * EazySoundManager.GlobalVolume;
+                        AudioSource.Volume = Volume * EazySoundManager.Instance.GlobalMusicVolume * EazySoundManager.Instance.GlobalVolume;
                         break;
                     }
                 case AudioType.Sound:
                     {
-                        AudioSource.Volume = Volume * EazySoundManager.GlobalSoundsVolume * EazySoundManager.GlobalVolume;
+                        AudioSource.Volume = Volume * EazySoundManager.Instance.GlobalSoundsVolume * EazySoundManager.Instance.GlobalVolume;
                         break;
                     }
                 case AudioType.UISound:
                     {
-                        AudioSource.Volume = Volume * EazySoundManager.GlobalUISoundsVolume * EazySoundManager.GlobalVolume;
+                        AudioSource.Volume = Volume * EazySoundManager.Instance.GlobalUISoundsVolume * EazySoundManager.Instance.GlobalVolume;
                         break;
                     }
             }

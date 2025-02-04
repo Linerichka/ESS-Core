@@ -13,114 +13,110 @@ namespace Lineri.ESS.Core
     /// <summary>
     /// Static class responsible for playing and managing audio and sounds.
     /// </summary>
-    public sealed partial class EazySoundManager : BaseClass, IDisposable
+    public partial class EazySoundManager<TAudio, TSource> : BaseClass, IEazySoundManager<TAudio, TSource>, IDisposable
+    where TAudio : class, IAudio, new()
+    where TSource : class, IAudioSource
     {
         /// <summary>
         /// If set to true, when starting a new music Clip, all others will be stopped
         /// </summary>
-        public static bool OnlyOnePlayableMusicClip = true;
+        public bool OnlyOnePlayableMusicClip = true;
 
-        public static bool CanPlayInBackground = true;
-        public static bool CanPlay => Application.IsFocused || CanPlayInBackground;
+        public bool CanPlayInBackground = true;
+        public bool CanPlay => Application.IsFocused || CanPlayInBackground;
 
         /// <summary>
         /// Global volume ranging from 0 to 1
         /// </summary>
-        public static float GlobalVolume
+        public float GlobalVolume
         {
             get => _globalVolume;
             set => _globalVolume = MathUtil.Clamp01(value);
         }
-        private static float _globalVolume = 1f;
+        private float _globalVolume = 1f;
 
         /// <summary>
         /// Global music volume ranging from 0 to 1
         /// </summary>
-        public static float GlobalMusicVolume
+        public float GlobalMusicVolume
         {
             get => _globalMusicVolume;
             set => _globalMusicVolume = MathUtil.Clamp01(value);
         }
-        private static float _globalMusicVolume = 1f;
+        private float _globalMusicVolume = 1f;
 
         /// <summary>
         /// Global sounds volume ranging from 0 to 1
         /// </summary>
-        public static float GlobalSoundsVolume
+        public float GlobalSoundsVolume
         {
             get => _globalSoundsVolume;
             set => _globalSoundsVolume = MathUtil.Clamp01(value);
         }
-        private static float _globalSoundsVolume = 1f;
+        private float _globalSoundsVolume = 1f;
 
         /// <summary>
         /// Global UI sounds volume ranging from 0 to 1
         /// </summary>
-        public static float GlobalUISoundsVolume
+        public float GlobalUISoundsVolume
         {
             get => _globalUISoundsVolume;
             set => _globalUISoundsVolume = MathUtil.Clamp01(value);
         }
-        private static float _globalUISoundsVolume = 1f;
+        private float _globalUISoundsVolume = 1f;
 
         #region Oprimize
-        private static Queue<IAudioSource> _cachedAudioSourceOnGameobject;
-        private static Queue<Audio> _cachedAudio;
+        private Queue<IAudioSource> _cachedAudioSourceOnGameobject;
+        private Queue<TAudio> _cachedAudio;
         #endregion
 
-        private static ListAudio _musicAudio;
-        private static ListAudio _soundsAudio;
-        private static ListAudio _UISoundsAudio;
-#if ESS_OnlyOneClip
+        private ListAudio<TAudio> _musicAudio;
+        private ListAudio<TAudio> _soundsAudio;
+        private ListAudio<TAudio> _UISoundsAudio;
+        #if ESS_OnlyOneClip
         // For one clip playble
-        private static Dictionary<IAudioClip, Audio> _clipAudioDictionary; 
-#endif
-        
-        
-        private static bool _pausedByLostFocus = false;
-        
+        private Dictionary<IAudioClip, TAudio> _clipAudioDictionary; 
+        #endif
 
-        public static EazySoundManager Instance
+        private bool _pausedByLostFocus = false;
+        
+        public static EazySoundManager<TAudio, TSource> Instance
         {
             get => _instance;
             private set => _instance = value;
         }
-        private static EazySoundManager _instance = null;
-        private static bool _isInitialized = false;
+        private static EazySoundManager<TAudio, TSource>  _instance = null;
+        private bool _isInitialized = false;
 
-        private EazySoundManager()
+        public EazySoundManager()
         {
             if (_isInitialized)
             {
                 throw new System.Exception("More one singlton.");
             }
 
+            Instance = this;
+            Instance.Init();
+            
             _isInitialized = true;
 
             Application.SceneLoaded += OnSceneLoaded;
         }
         public void Dispose() => Application.SceneLoaded -= OnSceneLoaded;
 
-        static EazySoundManager()
-        {
-            Instance = new EazySoundManager();
-
-            Instance.Init();
-        }
-
         /// <summary>
         /// Initialized the sound manager
         /// </summary>
         private void Init()
         {
-            _musicAudio = new ListAudio(64);
-            _soundsAudio = new ListAudio(64);
-            _UISoundsAudio = new ListAudio(64);
+            _musicAudio = new ListAudio<TAudio>(64);
+            _soundsAudio = new ListAudio<TAudio>(64);
+            _UISoundsAudio = new ListAudio<TAudio>(64);
             _cachedAudioSourceOnGameobject = new Queue<IAudioSource>(64);
-            _cachedAudio = new Queue<Audio>(64);
+            _cachedAudio = new Queue<TAudio>(64);
 
             #if ESS_OnlyOneClip
-            _clipAudioDictionary = new Dictionary<IAudioClip, Audio>(128);
+            _clipAudioDictionary = new Dictionary<IAudioClip, TAudio>(128);
             #endif
         }
 
@@ -159,13 +155,13 @@ namespace Lineri.ESS.Core
         /// Updates the state of all audios of an audio dist
         /// </summary>
         /// <param name="listAudio">The audio dist to update</param>
-        private static void UpdateAllAudio(ListAudio listAudio)
+        private void UpdateAllAudio(ListAudio<TAudio> listAudio)
         {
             // Go through all audios and update them
             int count = listAudio.Count;
             for (int i = 0; i < count; i++)
             {
-                Audio audio = listAudio[i];
+                TAudio audio = listAudio[i];
 
                 if (audio == null || audio.Paused || !audio.PlayedStart) continue;
 
@@ -184,9 +180,9 @@ namespace Lineri.ESS.Core
         /// </summary>
         /// <param name="audioType">The audio type of the dist to return</param>
         /// <returns>An audio dist</returns>
-        private static ListAudio GetAudioTypeList(AudioType audioType)
+        private ListAudio<TAudio> GetAudioTypeList(AudioType audioType)
         {
-            ListAudio listAudio;
+            ListAudio<TAudio> listAudio;
 
             switch (audioType)
             {
@@ -208,24 +204,24 @@ namespace Lineri.ESS.Core
         
     
         #region GetAudio Functions
-        public static Audio GetAudio(AudioType audioType, int audioID)
+        public TAudio GetAudio(AudioType audioType, int audioID)
         {
-            ListAudio listAudio = GetAudioTypeList(audioType);
+            ListAudio<TAudio> listAudio = GetAudioTypeList(audioType);
 
             if (!listAudio.Contains(audioID)) return null;
 
             return listAudio[audioID];
         }
 
-        public static List<Audio> GetAudios(AudioType audioType, IAudioClip audioClip)
+        public List<TAudio> GetAudios(AudioType audioType, IAudioClip audioClip)
         {
-            ListAudio listAudio = GetAudioTypeList(audioType);
-            List<Audio> result = new List<Audio>();
+            ListAudio<TAudio> listAudio = GetAudioTypeList(audioType);
+            List<TAudio> result = new List<TAudio>();
             
             int count = listAudio.Count;
             for (int i = 0; i < count; i++)
             {
-                Audio audio = listAudio[i];
+                TAudio audio = listAudio[i];
                 
                 if (audio != null && audio.Clip == audioClip) result.Add(audio);
             }
@@ -235,7 +231,7 @@ namespace Lineri.ESS.Core
         #endregion
         
         #region Play Functions
-        public static Audio PlayAudio(AudioType audioType, IAudioClip clip, float volume, bool loop, bool persist,
+        public TAudio PlayAudio(AudioType audioType, IAudioClip clip, float volume, bool loop, bool persist,
             float fadeInSeconds, float fadeOutSeconds, float currentMusicFadeOutSeconds = 0f)
         {
             // Stop all current music playing
@@ -244,7 +240,7 @@ namespace Lineri.ESS.Core
                 StopAudio(AudioType.Music, currentMusicFadeOutSeconds);
             }
 
-            Audio audio = PrepareAudio(audioType, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds);
+            TAudio audio = PrepareAudio(audioType, clip, volume, loop, persist, fadeInSeconds, fadeOutSeconds);
             audio.Play();
 
             return audio;
@@ -252,7 +248,7 @@ namespace Lineri.ESS.Core
         #endregion
 
         #region Prepare Function
-        public static Audio PrepareAudio(AudioType audioType, IAudioClip clip, float volume, bool loop, bool persist,
+        public TAudio PrepareAudio(AudioType audioType, IAudioClip clip, float volume, bool loop, bool persist,
             float fadeInSeconds, float fadeOutSeconds)
         {
             #if DEBUG
@@ -262,16 +258,16 @@ namespace Lineri.ESS.Core
             }
             #endif
             #if ESS_OnlyOneClip
-            if (_clipAudioDictionary.TryGetValue(clip, out Audio audioOld))
+            if (_clipAudioDictionary.TryGetValue(clip, out TAudio audioOld))
             {
                 return audioOld;
             }
             #endif
 
-            ListAudio listAudio = GetAudioTypeList(audioType);
+            ListAudio<TAudio> listAudio = GetAudioTypeList(audioType);
             int id = listAudio.GetFreeIndex();
             
-            Audio audio = GetAudioClass();
+            TAudio audio = GetAudioClass();
             audio.Init(id, audioType, clip, loop, persist, volume, fadeInSeconds, fadeOutSeconds, GetAudioSource());
 
             // Add it to list
@@ -284,19 +280,19 @@ namespace Lineri.ESS.Core
             return audio;
         }
 
-        private static Audio GetAudioClass()
+        private TAudio GetAudioClass()
         {
-            Audio audio;
+            TAudio audio;
             
             if (!_cachedAudio.TryDequeue(out audio))
             {
-                audio = new Audio();
+                audio = new TAudio();
             }
 
             return audio;
         }
         
-        private static IAudioSource GetAudioSource()
+        private IAudioSource GetAudioSource()
         {
             IAudioSource audioSource;
 
@@ -310,18 +306,18 @@ namespace Lineri.ESS.Core
         #endregion
 
         #region Stop Functions
-        public static void StopAll()
+        public void StopAll()
         {
             StopAudio(AudioType.Music);
             StopAudio(AudioType.Sound);
             StopAudio(AudioType.UISound);
         }
 
-        public static void StopAudio(AudioType audioType, float fadeOutSeconds = -1f)
+        public void StopAudio(AudioType audioType, float fadeOutSeconds = -1f)
         {
-            ListAudio listAudio = GetAudioTypeList(audioType);
+            ListAudio<TAudio> listAudio = GetAudioTypeList(audioType);
 
-            foreach (Audio audio in listAudio)
+            foreach (TAudio audio in listAudio)
             {
                 if (fadeOutSeconds >= 0) audio.FadeOutSeconds = fadeOutSeconds;
 
@@ -331,17 +327,17 @@ namespace Lineri.ESS.Core
         #endregion
 
         #region Pause Functions
-        public static void PauseAudio(AudioType audioType)
+        public void PauseAudio(AudioType audioType)
         {
-            ListAudio listAudio = GetAudioTypeList(audioType);
+            ListAudio<TAudio> listAudio = GetAudioTypeList(audioType);
 
-            foreach (Audio audio in listAudio)
+            foreach (TAudio audio in listAudio)
             {
                 audio.Pause();
             }
         }
 
-        public static void PauseAllAudio()
+        public void PauseAllAudio()
         {
             PauseAudio(AudioType.Music);
             PauseAudio(AudioType.Sound);
@@ -350,14 +346,14 @@ namespace Lineri.ESS.Core
         #endregion
 
         #region Resume Functions
-        public static void UnPauseAudio(AudioType audioType)
+        public void UnPauseAudio(AudioType audioType)
         {
-            ListAudio listAudio = GetAudioTypeList(audioType);
+            ListAudio<TAudio> listAudio = GetAudioTypeList(audioType);
 
-            foreach (Audio audio in listAudio) audio.UnPause();
+            foreach (TAudio audio in listAudio) audio.UnPause();
         }
 
-        public static void UnPauseAllAudio()
+        public void UnPauseAllAudio()
         {
             UnPauseAudio(AudioType.Music);
             UnPauseAudio(AudioType.Sound);
@@ -370,12 +366,12 @@ namespace Lineri.ESS.Core
         /// Remove all non-persistant audios from an audio dist
         /// </summary>
         /// <param name="listAudio">The audio dist whose non-persistant audios are getting removed</param>
-        private static void RemoveNonPersistAudio(ListAudio listAudio)
+        private void RemoveNonPersistAudio(ListAudio<TAudio> listAudio)
         {
             // Go through all audios and remove them if they should not persist through scenes
             for (int i = 0; i < listAudio.Count; i++)
             {
-                Audio audio = listAudio[i];
+                TAudio audio = listAudio[i];
 
                 if (audio.Persist && audio.Activated) continue;
 
@@ -383,7 +379,7 @@ namespace Lineri.ESS.Core
             }
         }
 
-        private static void DeleteAudio(Audio audio, ListAudio listAudio, ref int key)
+        private void DeleteAudio(TAudio audio, ListAudio<TAudio> listAudio, ref int key)
         {
             #if ESS_OnlyOneClip
             _clipAudioDictionary.Remove(audio.Clip);
@@ -400,7 +396,7 @@ namespace Lineri.ESS.Core
         /// <summary>
         /// Clear the AudioSource queue and delete the AudioSource if they do not contain a clip.
         /// </summary>
-        private static void DeleteUnusedAudioSource()
+        private void DeleteUnusedAudioSource()
         {
             while (_cachedAudioSourceOnGameobject.TryDequeue(out IAudioSource audioSource))
             {

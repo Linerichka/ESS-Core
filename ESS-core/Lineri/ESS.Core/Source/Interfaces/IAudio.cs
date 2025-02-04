@@ -67,6 +67,10 @@ public interface IAudio
     /// The pitch of the audio
     /// </summary>
     float Pitch { get; set; }
+    
+    public bool Persist { get; set; }
+    public float FadeInSeconds { get; set; }
+    public float FadeOutSeconds { get; set; }
 
     /// <summary>
     /// Sets the values for the class. Do not call this method manually!

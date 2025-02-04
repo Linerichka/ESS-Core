@@ -18,7 +18,7 @@ public class TListAudio
         _testOutputHelper = testOutputHelper;
     }
 
-    private void Fill(ListAudio l, int count)
+    private void Fill(ListAudio<Audio> l, int count)
     {
         for (int i = 0; i < count; i++)
         {
@@ -29,7 +29,7 @@ public class TListAudio
     [Fact]
     public void CheckIdentityToDictionary()
     {
-        var l = new ListAudio(64);
+        var l = new ListAudio<Audio>(64);
         var d = new Dictionary<int, Audio>(64);
         var v = new Audio[128];
         
@@ -74,7 +74,7 @@ public class TListAudio
         
         Assert.True(l[0] != v[0]);
         
-        var ll = new ListAudio(l.ToArray());
+        var ll = new ListAudio<Audio>(l.ToArray());
         //Assert.All(ll, (Audio a, int i) => Assert.True(a == l[i]));
         for (int i = 0; i < 128; i++)
         {
@@ -85,7 +85,7 @@ public class TListAudio
     [Fact]
     public void CheckIndexOf()
     {
-        var l = new ListAudio(64);
+        var l = new ListAudio<Audio>(64);
         Fill(l, 64);
         var v = new Audio();
         var c = new Mock<IAudioClip>();
@@ -110,7 +110,7 @@ public class TListAudio
     [Fact]
     public void CheckIndexing()
     {
-        var l = new ListAudio(64);
+        var l = new ListAudio<Audio>(64);
         Fill(l, 64);
         
         l.Remove(0);
@@ -128,7 +128,7 @@ public class TListAudio
 
     public void Copy()
     {
-        var l = new ListAudio(64);
+        var l = new ListAudio<Audio>(64);
         Fill(l, 64);
         
         Audio[] a = new Audio[64];
@@ -138,7 +138,7 @@ public class TListAudio
     [Fact]
     public void Other()
     {
-        var l = new ListAudio(64);
+        var l = new ListAudio<Audio>(64);
         Fill(l, 64);
         foreach (var a in l)
         {
@@ -154,7 +154,7 @@ public class TListAudio
 
         l = new();
         Assert.Equal(l.Capacity, l.Count);
-        Assert.Equal(l.Capacity, new ListAudio().Capacity);
+        Assert.Equal(l.Capacity, new ListAudio<Audio>().Capacity);
     }
 
     public class TListAudioAutoGen()
@@ -189,7 +189,7 @@ public class TListAudio
     [Fact]
     public void Clear_ShouldRemoveAllItems()
     {
-        var collection = new ListAudio();
+        var collection = new ListAudio<Audio>();
         collection.Add(new Audio());
         collection.Add(new Audio());
 
@@ -201,7 +201,7 @@ public class TListAudio
     [Fact]
     public void Contains_ShouldReturnTrueIfItemExists()
     {
-        var collection = new ListAudio();
+        var collection = new ListAudio<Audio>();
         var audio = new Audio();
 
         collection.Add(audio);
@@ -212,7 +212,7 @@ public class TListAudio
     [Fact]
     public void CopyTo_ShouldCopyElementsToArray()
     {
-        var collection = new ListAudio(2);
+        var collection = new ListAudio<Audio>(2);
         var audio1 = new Audio();
         var audio2 = new Audio();
         collection.Add(audio1);
@@ -228,7 +228,7 @@ public class TListAudio
     [Fact]
     public void GetEnumerator_ShouldEnumerateAllItems()
     {
-        var collection = new ListAudio();
+        var collection = new ListAudio<Audio>();
         var audio1 = new Audio();
         var audio2 = new Audio();
         collection.Add(audio1);

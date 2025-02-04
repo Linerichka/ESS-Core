@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <RootNamespace>ESS_core</RootNamespace>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
