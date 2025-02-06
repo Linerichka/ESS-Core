@@ -6,8 +6,8 @@ namespace Lineri.ESS.Core.Utils
 
     public static class Application
     {
-        public static bool IsFocused => true;
-        public static bool IsPlaying => true;
+        public static bool IsFocused = true;
+        public static bool IsPlaying = true;
 
         public static Action SceneLoaded;
 

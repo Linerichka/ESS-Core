@@ -16,7 +16,7 @@ public class Program
     public void CheckIdentityToDictionaryL()
     {
         var v = new Audio[1280];
-        var ld = new ListAudio(64);
+        var ld = new ListAudio<Audio>(64);
         
         for (int i = 0; i < 1280; i++)
         {

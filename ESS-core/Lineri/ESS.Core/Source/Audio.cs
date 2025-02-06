@@ -108,25 +108,12 @@ namespace Lineri.ESS.Core
             audioSource.Clip = _clip;
             audioSource.Volume = Volume;
         }
-
-        /// <summary>
-        /// Initializes the audiosource component with the appropriate values
-        /// </summary>
-        private void SetValueAudioSource(bool hasData = false)
-        {
-            IAudioSource audioSource = AudioSource;
-            audioSource.Loop = Loop;
-            audioSource.Mute = Mute;
-            audioSource.Pitch = Pitch;
-        }
-
         
         public void Update()
         {
             if (!Activated)
             {
                 _fadeInterpolater = -Application.DeltaTime;
-                SetValueAudioSource();
                 Activated = true;
             }
 
@@ -165,12 +152,12 @@ namespace Lineri.ESS.Core
                     }
                 case AudioType.Sound:
                     {
-                        AudioSource.Volume = Volume * EazySoundManager.Instance.GlobalSoundsVolume * EazySoundManager.Instance.GlobalVolume;
+                        AudioSource.Volume = Volume * EazySoundManager.Instance.GlobalSoundVolume * EazySoundManager.Instance.GlobalVolume;
                         break;
                     }
                 case AudioType.UISound:
                     {
-                        AudioSource.Volume = Volume * EazySoundManager.Instance.GlobalUISoundsVolume * EazySoundManager.Instance.GlobalVolume;
+                        AudioSource.Volume = Volume * EazySoundManager.Instance.GlobalUISoundVolume * EazySoundManager.Instance.GlobalVolume;
                         break;
                     }
             }

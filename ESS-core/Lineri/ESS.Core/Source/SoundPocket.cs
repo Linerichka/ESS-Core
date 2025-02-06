@@ -60,19 +60,6 @@ namespace Lineri.ESS.Core
                 else _fadeOutSecond = value;
             }
         }
-
-        
-        private float _currentMusicFadeOutSeconds = -1f;
-        public float CurrentMusicFadeOut
-        {
-            get => _currentMusicFadeOutSeconds;
-            set
-            {
-                if (MathUtil.Approximately(-1f, value)) _currentMusicFadeOutSeconds = -1f;
-                else if (value < 0f) _currentMusicFadeOutSeconds = 0f;
-                else _currentMusicFadeOutSeconds = value;
-            }
-        }
         
         //
         // If true, then fade in applies only to the first clip in the queue
@@ -339,7 +326,7 @@ namespace Lineri.ESS.Core
         {
             Audio audio = EazySoundManager.Instance.PlayMusic(clip, SoundVolume, false, PersistSoundOnSceneLoad,
                 FadeInCanSet() ? FadeInSecond : 0f,
-                FadeOutSecond, CurrentMusicFadeOut);
+                FadeOutSecond);
             _audioFromClips.Add(audio);
             return audio;
         }

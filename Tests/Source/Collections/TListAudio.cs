@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Diagnostics;
 using Lineri.ESS.Core;
 using Lineri.ESS.Core.Interfaces;
 using Xunit.Abstractions;
@@ -124,6 +125,8 @@ public class TListAudio
         Assert.True(c != 0 && c != -1);
         l.Clear();
         Assert.True(l.GetCountNoNull() == 0);
+        
+        Assert.False(l.Contains(l.Count));
     }
 
     public void Copy()
@@ -155,6 +158,23 @@ public class TListAudio
         l = new();
         Assert.Equal(l.Capacity, l.Count);
         Assert.Equal(l.Capacity, new ListAudio<Audio>().Capacity);
+        
+        Fill(l, 64);
+        var le = l.GetEnumerator();
+        var lae = (l as IEnumerable).GetEnumerator();
+        var ae = l.GetPrivateArray<Audio[]>().GetEnumerator();
+
+        le.MoveNext();lae.MoveNext();ae.MoveNext();
+        while (true)
+        {
+            Assert.Equal((Audio)le.Current, (Audio)ae.Current);
+            Assert.Equal((Audio)lae.Current, (Audio)ae.Current);
+            Assert.Equal((Audio)lae.Current, (Audio)le.Current);
+            if (!le.MoveNext() || !ae.MoveNext() || !lae.MoveNext())
+            {
+                break;
+            }
+        }
     }
 
     public class TListAudioAutoGen()

@@ -9,6 +9,30 @@ public interface IEazySoundManager<TAudio, TSource> : IDisposable
 where TAudio : IAudio
 where TSource : IAudioSource
 {
+    
+    bool CanPlay { get; }
+
+    /// <summary>
+    /// Global volume ranging from 0 to 1
+    /// </summary>
+    float GlobalVolume { get; set; }
+
+    /// <summary>
+    /// Global music volume ranging from 0 to 1
+    /// </summary>
+    float GlobalMusicVolume { get; set; }
+
+    /// <summary>
+    /// Global sounds volume ranging from 0 to 1
+    /// </summary>
+    float GlobalSoundVolume { get; set; }
+
+    /// <summary>
+    /// Global UI sounds volume ranging from 0 to 1
+    /// </summary>
+    float GlobalUISoundVolume { get; set; }
+    
+    
     /// <summary>
     /// Returns the music Audio that has as its id the audioID if one is found, returns null if no such Audio is found
     /// </summary>
@@ -21,7 +45,7 @@ where TSource : IAudioSource
     /// </summary>
     /// <param name="audioClip">The audio clip of the music Audio to be retrieved</param>
     /// <returns>All occurrence of music Audio that has as plays the audioClip, null if no such Audio is found</returns>
-    List<TAudio> GetMusicAudio(IAudioClip audioClip);
+    List<TAudio> GetMusicAudios(IAudioClip audioClip);
 
     /// <summary>
     /// Returns the sound fx Audio that has as its id the audioID if one is found, returns null if no such Audio is found
@@ -35,7 +59,7 @@ where TSource : IAudioSource
     /// </summary>
     /// <param name="audioClip">The audio clip of the sound Audio to be retrieved</param>
     /// <returns>All occurrence of sound Audio that has as plays the audioClip, null if no such Audio is found</returns>
-    List<TAudio> GetSoundAudio(IAudioClip audioClip);
+    List<TAudio> GetSoundAudios(IAudioClip audioClip);
 
     /// <summary>
     /// Returns the UI sound fx Audio that has as its id the audioID if one is found, returns null if no such Audio is found
@@ -49,7 +73,7 @@ where TSource : IAudioSource
     /// </summary>
     /// <param name="audioClip">The audio clip of the UI sound Audio to be retrieved</param>
     /// <returns>All occurrence of UI sound Audio that has as plays the audioClip, null if no such Audio is found</returns>
-    List<TAudio> GetUISoundAudio(IAudioClip audioClip);
+    List<TAudio> GetUISoundAudios(IAudioClip audioClip);
 
     TAudio PlaySound(IAudioClip clip, float volume = 1f, bool loop = false, bool persist = false, 
         float fadeInSeconds = 0f, float fadeOutSeconds = 0f);
@@ -66,34 +90,12 @@ where TSource : IAudioSource
     TAudio PrepareUISound(IAudioClip clip, float volume = 1f, bool loop = false, bool persist = false, 
         float fadeInSeconds = 0f, float fadeOutSeconds = 0f);
 
-    bool CanPlay { get; }
-
-    /// <summary>
-    /// Global volume ranging from 0 to 1
-    /// </summary>
-    float GlobalVolume { get; set; }
-
-    /// <summary>
-    /// Global music volume ranging from 0 to 1
-    /// </summary>
-    float GlobalMusicVolume { get; set; }
-
-    /// <summary>
-    /// Global sounds volume ranging from 0 to 1
-    /// </summary>
-    float GlobalSoundsVolume { get; set; }
-
-    /// <summary>
-    /// Global UI sounds volume ranging from 0 to 1
-    /// </summary>
-    float GlobalUISoundsVolume { get; set; }
-
     void Update();
     TAudio GetAudio(AudioType audioType, int audioID);
     List<TAudio> GetAudios(AudioType audioType, IAudioClip audioClip);
 
     TAudio PlayAudio(AudioType audioType, IAudioClip clip, float volume = 1f, bool loop = false, bool persist = false, 
-        float fadeInSeconds = 0f, float fadeOutSeconds = 0f, float currentMusicFadeOutSeconds = 0f);
+        float fadeInSeconds = 0f, float fadeOutSeconds = 0f);
 
     TAudio PrepareAudio(AudioType audioType, IAudioClip clip, float volume = 1f, bool loop = false, bool persist = false, 
         float fadeInSeconds = 0f, float fadeOutSeconds = 0f);
